@@ -24,12 +24,13 @@ public class EmployeeMarksController {
         return emr.findAll();
     }
 
-    // Method to post the marks for an employee
-    @PostMapping
-    public ResponseEntity<EmployeeMarks> postEmployeeMarks(@RequestBody EmployeeMarks employeeMarks) {
-        EmployeeMarks savedEmployeeMarks = emr.save(employeeMarks);
-        return ResponseEntity.ok().body(savedEmployeeMarks);
-    }
+//    // Method to post the marks for an employee
+//    @PostMapping
+//    public ResponseEntity<EmployeeMarks> postEmployeeMarks(@RequestBody EmployeeMarks employeeMarks) {
+//        EmployeeMarks savedEmployeeMarks = emr.save(employeeMarks);
+//        return ResponseEntity.ok().body(savedEmployeeMarks);
+//    } --> PostMapping not working
+
 
     @GetMapping("/{employeeId}")
     public ResponseEntity<EmployeeMarks> getEmployeeMarksById(@PathVariable Long employeeId) {
@@ -39,6 +40,5 @@ public class EmployeeMarksController {
 
         return ResponseEntity.ok().body(employeeMarks);
     }
-
 
 }
