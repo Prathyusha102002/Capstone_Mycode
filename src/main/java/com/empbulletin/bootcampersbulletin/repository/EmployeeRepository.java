@@ -4,8 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.empbulletin.bootcampersbulletin.model.Employee;
 
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+import java.util.List;
 
-	//all crud database operations
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    List<Employee> findByBatchNo(Integer batchNo);
+
+    //all crud database operations
 	
 }
