@@ -3,6 +3,7 @@ package com.empbulletin.bootcampersbulletin.controller;
 import java.util.List;
 
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
+import com.empbulletin.bootcampersbulletin.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,18 @@ public class EmployeeController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Employee createEmployee(@RequestBody Employee employee) {
 		return eR.save(employee);
+	}
+
+	@Autowired
+	private EmployeeService employeeService;
+
+	@PostMapping("/login")
+	public String login(@RequestParam Long emp_id, @RequestParam String password) {
+		if (employeeService.authenticate(emp_id, password)) {
+			return "Login successful";
+		} else {
+			return "Login failed";
+		}
 	}
 	
 }
