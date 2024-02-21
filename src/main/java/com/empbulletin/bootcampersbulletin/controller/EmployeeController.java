@@ -36,6 +36,16 @@ public class EmployeeController {
 			throw new ResourceNotFoundException("Employee with id " + id + " not found");
 		}
 	}
+
+	@GetMapping("/batch/{batchNo}")
+	public List<Employee> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
+		List<Employee> employees = eR.findByBatchNo(batchNo);
+		if (employees.isEmpty()) {
+			throw new ResourceNotFoundException("Employees in batch number " + batchNo + " not found");
+		}
+		return employees;
+	}
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Employee createEmployee(@RequestBody Employee employee) {
