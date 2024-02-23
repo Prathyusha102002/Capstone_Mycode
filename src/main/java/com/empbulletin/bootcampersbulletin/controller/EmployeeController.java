@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -21,6 +22,8 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeRepository eR;
+	@Autowired
+	private EmployeeService employeeService;
 	
 	@GetMapping
 	public List<Employee> getAllEmployees() {
@@ -46,14 +49,8 @@ public class EmployeeController {
 		return employees;
 	}
 
-	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public Employee createEmployee(@RequestBody Employee employee) {
-		return eR.save(employee);
-	}
 
-	@Autowired
-	private EmployeeService employeeService;
+
 
 	@PostMapping("/login")
 	public String login(@RequestParam Long emp_id, @RequestParam String password) {
@@ -63,5 +60,7 @@ public class EmployeeController {
 			return "Login failed";
 		}
 	}
-	
+
+
+
 }
