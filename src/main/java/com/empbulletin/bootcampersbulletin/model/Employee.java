@@ -1,14 +1,14 @@
 package com.empbulletin.bootcampersbulletin.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "Employee")
 public class Employee {
 
@@ -28,14 +28,9 @@ public class Employee {
 	@Column(name = "batchNo")
 	private Integer batchNo;
 
-
-
-
-
 	public Employee() {
 
 	}
-
 
 	public Employee(Long emp_id, String emp_name, String emp_mail, String password, Integer batchNo) {
 		this.emp_id = emp_id;
@@ -46,9 +41,7 @@ public class Employee {
 	}
 
 	public void setPassword(String password) {
-
 		this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
 	}
 
-	// getters and setters
 }

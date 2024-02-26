@@ -24,11 +24,14 @@ public class EmployeeController {
 	private EmployeeRepository eR;
 	@Autowired
 	private EmployeeService employeeService;
-	
+
+	// Get all Employee details
 	@GetMapping
 	public List<Employee> getAllEmployees() {
 		return eR.findAll();
 	}
+
+	// Get Employee details by emp_id
 	@GetMapping("/{id}")
 	public Employee getEmployeeById(@PathVariable Long id) {
 		Optional<Employee> employee = eR.findById(id);
@@ -40,6 +43,7 @@ public class EmployeeController {
 		}
 	}
 
+	// Get Employee details by batch No
 	@GetMapping("/batch/{batchNo}")
 	public List<Employee> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
 		List<Employee> employees = eR.findByBatchNo(batchNo);
@@ -49,9 +53,7 @@ public class EmployeeController {
 		return employees;
 	}
 
-
-
-
+	// Login authentication for Employees
 	@PostMapping("/login")
 	public String login(@RequestParam Long emp_id, @RequestParam String password) {
 		if (employeeService.authenticate(emp_id, password)) {
@@ -60,7 +62,5 @@ public class EmployeeController {
 			return "Login failed";
 		}
 	}
-
-
 
 }

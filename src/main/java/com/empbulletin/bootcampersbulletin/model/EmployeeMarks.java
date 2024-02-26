@@ -11,6 +11,4 @@ public class EmployeeMarks {
     @Column(name = "EMP_ID")
     private Long empID;
 
-
-
 }
