@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Entity
 @Getter
 @Setter
@@ -17,6 +20,15 @@ public class Marks {
     @ManyToOne
     @JoinColumn(name = "emp_id", referencedColumnName = "emp_id")
     private Employee employee;
+
+
+
+    @ElementCollection
+    @CollectionTable(name = "subject_marks", joinColumns = @JoinColumn(name = "marks_id"))
+    @MapKeyColumn(name = "subject_name")
+    @Column(name = "marks")
+    private Map<String, Float> subjectMarks = new HashMap<>();
+
 
     @Column(name = "unix")
     private Float unix;

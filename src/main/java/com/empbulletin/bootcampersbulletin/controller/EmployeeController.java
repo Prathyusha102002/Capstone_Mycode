@@ -2,16 +2,12 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import java.util.List;
 
+import DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 import java.util.Optional;
-
-
 import com.empbulletin.bootcampersbulletin.model.Employee;
 import com.empbulletin.bootcampersbulletin.repository.EmployeeRepository;
 
@@ -24,33 +20,62 @@ public class EmployeeController {
 	private EmployeeRepository eR;
 	@Autowired
 	private EmployeeService employeeService;
-	
+	private java.util.stream.Collectors Collectors;
+
+
+	//getting all the employee details
 	@GetMapping
-	public List<Employee> getAllEmployees() {
-		return eR.findAll();
+	public List<EmployeeDTO> getAllEmployees() {
+		List<Employee> employees = eR.findAll();
+		return employees.stream()
+				.map(employee -> {
+					EmployeeDTO dto = new EmployeeDTO();
+					dto.setEmp_id(employee.getEmp_id());
+					dto.setEmp_name(employee.getEmp_name());
+					dto.setEmp_mail(employee.getEmp_mail());
+					dto.setBatchNo(employee.getBatchNo());
+					return dto;
+				})
+				.collect(Collectors.toList());
 	}
+	// getting employee details by id
 	@GetMapping("/{id}")
-	public Employee getEmployeeById(@PathVariable Long id) {
+	public EmployeeDTO getEmployeeById(@PathVariable Long id) {
 		Optional<Employee> employee = eR.findById(id);
 		if (employee.isPresent()) {
-			return employee.get();
+			Employee emp = employee.get();
+			EmployeeDTO dto = new EmployeeDTO();
+			dto.setEmp_id(emp.getEmp_id());
+			dto.setEmp_name(emp.getEmp_name());
+			dto.setEmp_mail(emp.getEmp_mail());
+			dto.setBatchNo(emp.getBatchNo());
+			return dto;
 		} else {
-			// Handle the case where employee with given id doesn't exist
 			throw new ResourceNotFoundException("Employee with id " + id + " not found");
 		}
 	}
 
+	//getting employees list by batch number
 	@GetMapping("/batch/{batchNo}")
-	public List<Employee> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
+	public List<EmployeeDTO> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
 		List<Employee> employees = eR.findByBatchNo(batchNo);
 		if (employees.isEmpty()) {
 			throw new ResourceNotFoundException("Employees in batch number " + batchNo + " not found");
 		}
-		return employees;
+		return employees.stream()
+				.map(employee -> {
+					EmployeeDTO dto = new EmployeeDTO();
+					dto.setEmp_id(employee.getEmp_id());
+					dto.setEmp_name(employee.getEmp_name());
+					dto.setEmp_mail(employee.getEmp_mail());
+					dto.setBatchNo(employee.getBatchNo());
+					return dto;
+				})
+				.collect(Collectors.toList());
 	}
 
 
-
+	//employee login
 
 	@PostMapping("/login")
 	public String login(@RequestParam Long emp_id, @RequestParam String password) {
