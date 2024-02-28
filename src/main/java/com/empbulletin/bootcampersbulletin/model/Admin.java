@@ -1,12 +1,12 @@
 package com.empbulletin.bootcampersbulletin.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString
 @AllArgsConstructor
 @Entity
 public class Admin {
@@ -20,24 +20,5 @@ public class Admin {
     @Column
     private String password;
 
-    // Constructors
-    public Admin() {
-    }
-
-    public Admin(String name, String email, String password) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-    }
-
-    // toString method
-    @Override
-    public String toString() {
-        return "Admin{" +
-                "adminId=" + adminId +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
 }
+
