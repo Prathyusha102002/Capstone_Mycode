@@ -1,7 +1,7 @@
 package com.empbulletin.bootcampersbulletin.controller;
 
-import DTO.EmployeeDTO;
-import DTO.MarksDTO;
+import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
+import com.empbulletin.bootcampersbulletin.DTO.MarksDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.model.Employee;
 import com.empbulletin.bootcampersbulletin.model.Marks;

@@ -1,4 +1,4 @@
-package DTO;
+package com.empbulletin.bootcampersbulletin.DTO;
 
 import jakarta.persistence.Column;
 import lombok.Getter;

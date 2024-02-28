@@ -1,4 +1,4 @@
-package DTO;
+package com.empbulletin.bootcampersbulletin.DTO;
 
 import lombok.Getter;
 import lombok.Setter;

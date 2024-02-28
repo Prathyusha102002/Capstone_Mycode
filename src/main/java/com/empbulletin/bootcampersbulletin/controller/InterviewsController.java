@@ -1,14 +1,12 @@
 package com.empbulletin.bootcampersbulletin.controller;
 
-import DTO.EmployeeDTO;
-import DTO.InterviewsDTO;
+import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
+import com.empbulletin.bootcampersbulletin.DTO.InterviewsDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.model.Employee;
 import com.empbulletin.bootcampersbulletin.model.Interviews;
-import com.empbulletin.bootcampersbulletin.model.Marks;
 import com.empbulletin.bootcampersbulletin.repository.EmployeeRepository;
 import com.empbulletin.bootcampersbulletin.repository.InterviewsRepository;
-import com.empbulletin.bootcampersbulletin.repository.MarksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

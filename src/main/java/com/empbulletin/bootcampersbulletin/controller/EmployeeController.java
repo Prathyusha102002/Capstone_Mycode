@@ -2,7 +2,7 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import java.util.List;
 
-import DTO.EmployeeDTO;
+import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
