@@ -20,10 +20,9 @@ public class EmployeeController {
 	private EmployeeRepository eR;
 	@Autowired
 	private EmployeeService employeeService;
+
 	private java.util.stream.Collectors Collectors;
 
-
-	//getting all the employee details
 	@GetMapping
 	public List<EmployeeDTO> getAllEmployees() {
 		List<Employee> employees = eR.findAll();
@@ -38,7 +37,9 @@ public class EmployeeController {
 				})
 				.collect(Collectors.toList());
 	}
-	// getting employee details by id
+
+	// Get Employee details by emp_id
+  
 	@GetMapping("/{id}")
 	public EmployeeDTO getEmployeeById(@PathVariable Long id) {
 		Optional<Employee> employee = eR.findById(id);
@@ -55,7 +56,8 @@ public class EmployeeController {
 		}
 	}
 
-	//getting employees list by batch number
+	// Get Employee details by batch No
+
 	@GetMapping("/batch/{batchNo}")
 	public List<EmployeeDTO> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
 		List<Employee> employees = eR.findByBatchNo(batchNo);
@@ -74,8 +76,7 @@ public class EmployeeController {
 				.collect(Collectors.toList());
 	}
 
-
-	//employee login
+	// Login authentication for Employees
 
 	@PostMapping("/login")
 	public String login(@RequestParam Long emp_id, @RequestParam String password) {
@@ -85,7 +86,5 @@ public class EmployeeController {
 			return "Login failed";
 		}
 	}
-
-
 
 }

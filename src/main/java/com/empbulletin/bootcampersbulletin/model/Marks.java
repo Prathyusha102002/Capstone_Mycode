@@ -118,8 +118,6 @@ public class Marks {
         this.devops = devops;
     }
 
-
-
     public Long getMarks_id()
     {
         return marks_id;
@@ -216,4 +214,5 @@ public class Marks {
     public void setDevops(Float devops) {
         this.devops = devops;
     }
+
 }

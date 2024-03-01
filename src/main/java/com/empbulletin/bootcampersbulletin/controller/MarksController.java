@@ -24,7 +24,7 @@ public class MarksController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-
+    // Enter marks for Employee
     @PostMapping("/save/{emp_id}")
     @ResponseStatus(HttpStatus.CREATED)
     public Marks saveMarksForEmployee(@PathVariable Long emp_id, @RequestBody Marks marks) {
@@ -38,6 +38,7 @@ public class MarksController {
         }
     }
 
+    // Fetch Employee Marks details
     @GetMapping("/{emp_id}/{marks_id}")
     public ResponseEntity<MarksDTO> getAssessmentResult(
             @PathVariable Long emp_id,
@@ -95,6 +96,7 @@ public class MarksController {
         }
     }
 
+    // Delete Employee Marks details
     @DeleteMapping("/{emp_id}/{marks_id}")
     public String deleteMarksForEmployee(
             @PathVariable Long emp_id,
@@ -107,7 +109,6 @@ public class MarksController {
             throw new ResourceNotFoundException("Marks with emp_id " + emp_id + " and marks_id " + marks_id + " not found");
         }
     }
-
 
     @PutMapping("/{emp_id}/{marks_id}")
     public ResponseEntity<String> updateMarksForEmployee(
@@ -183,6 +184,5 @@ public class MarksController {
             throw new ResourceNotFoundException("Marks with emp_id " + emp_id + " and marks_id " + marks_id + " not found");
         }
     }
-
 
 }
