@@ -77,17 +77,17 @@ public class InterviewsController {
             responseDTO.setAverage_interviews(averageMarks);
 
             // Set marks_rating based on average_marks
-            String marksRating;
+            String interviewFeedback;
             if (averageMarks >= 8) {
-                marksRating = "Excellent";
+                interviewFeedback = "Excellent";
             } else if (averageMarks >= 6) {
-                marksRating = "Good";
+                interviewFeedback = "Good";
             } else if (averageMarks >= 4) {
-                marksRating = "Average";
+                interviewFeedback = "Average";
             } else {
-                marksRating = "Poor";
+                interviewFeedback = "Poor";
             }
-            responseDTO.setInterviews_rating(marksRating);
+            responseDTO.setInterviews_feedback(interviewFeedback);
 
             return ResponseEntity.ok(responseDTO);
         } else {
@@ -167,17 +167,17 @@ public class InterviewsController {
             responseDTO.setAverage_interviews(averageInterviews);
 
             // Set marks_rating based on average_marks
-            String interviewsRating;
+            String interviewsFeedback;
             if (averageInterviews >= 8) {
-                interviewsRating = "Excellent";
+                interviewsFeedback = "Excellent";
             } else if (averageInterviews >= 6) {
-                interviewsRating = "Good";
+                interviewsFeedback = "Good";
             } else if (averageInterviews >= 4) {
-                interviewsRating = "Average";
+                interviewsFeedback = "Average";
             } else {
-                interviewsRating = "Poor";
+                interviewsFeedback = "Poor";
             }
-            responseDTO.setInterviews_rating(interviewsRating);
+            responseDTO.setInterviews_feedback(interviewsFeedback);
             interviewsRepository.save(existingInterviews);
             return ResponseEntity.ok("Interview Ratings updated successfully");
         } else {

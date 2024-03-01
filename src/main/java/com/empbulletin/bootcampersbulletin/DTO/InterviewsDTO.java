@@ -20,5 +20,5 @@ public class InterviewsDTO {
     private Float jenkins;
     private Float devops;
     private Float average_interviews; // New field
-    private String interviews_rating;
+    private String interviews_feedback;
 }

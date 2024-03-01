@@ -78,17 +78,17 @@ public class MarksController {
             responseDTO.setAverage_marks(averageMarks);
 
             // Set marks_rating based on average_marks
-            String marksRating;
+            String marksFeedback;
             if (averageMarks >= 8) {
-                marksRating = "Excellent";
+                marksFeedback = "Excellent";
             } else if (averageMarks >= 6) {
-                marksRating = "Good";
+                marksFeedback = "Good";
             } else if (averageMarks >= 4) {
-                marksRating = "Average";
+                marksFeedback = "Average";
             } else {
-                marksRating = "Poor";
+                marksFeedback = "Poor";
             }
-            responseDTO.setMarks_rating(marksRating);
+            responseDTO.setMarks_feedback(marksFeedback);
 
             return ResponseEntity.ok(responseDTO);
         } else {
@@ -167,17 +167,17 @@ public class MarksController {
             responseDTO.setAverage_marks(averageMarks);
 
             // Set marks_rating based on average_marks
-            String marksRating;
+            String marksFeedback;
             if (averageMarks >= 8) {
-                marksRating = "Excellent";
+                marksFeedback = "Excellent";
             } else if (averageMarks >= 6) {
-                marksRating = "Good";
+                marksFeedback = "Good";
             } else if (averageMarks >= 4) {
-                marksRating = "Average";
+                marksFeedback = "Average";
             } else {
-                marksRating = "Poor";
+                marksFeedback = "Poor";
             }
-            responseDTO.setMarks_rating(marksRating);
+            responseDTO.setMarks_feedback(marksFeedback);
             marksRepository.save(existingMarks);
             return ResponseEntity.ok("Marks updated successfully");
         } else {
