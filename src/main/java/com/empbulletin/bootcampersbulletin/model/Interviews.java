@@ -55,6 +55,34 @@ public class Interviews {
         this.jenkins = jenkins;
         this.devops = devops;
     }
+    // Additional fields
+    @Transient
+    private Float average_interviews;
+
+    @Transient
+    private String interviews_rating;
+
+    // Calculate average_marks
+    @PostLoad
+    public void calculateAverageInterviews() {
+        float totalInterviews = unix + sequel + java + testing + python + aiml + azure + git + jenkins + devops;
+        average_interviews = totalInterviews / 10;
+        calculateInterviewsRating();
+    }
+
+    // Calculate marks_rating based on average_marks
+    private void calculateInterviewsRating() {
+        if (average_interviews >= 9.0) {
+            interviews_rating = "Excellent";
+        } else if (average_interviews >= 7.0) {
+            interviews_rating = "Good";
+        } else if (average_interviews >= 5.0) {
+            interviews_rating = "Average";
+        } else {
+            interviews_rating = "Poor";
+        }
+    }
+
 
     @Override
     public String toString() {

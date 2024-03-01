@@ -18,4 +18,6 @@ public class MarksDTO {
     private Float git;
     private Float jenkins;
     private Float devops;
+    private Float average_marks; // New field
+    private String marks_rating;
 }

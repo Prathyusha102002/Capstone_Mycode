@@ -2,6 +2,7 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.DTO.InterviewsDTO;
+import com.empbulletin.bootcampersbulletin.DTO.MarksDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.model.Employee;
 import com.empbulletin.bootcampersbulletin.model.Interviews;
@@ -68,6 +69,25 @@ public class InterviewsController {
             responseDTO.setGit(interviews.getGit());
             responseDTO.setJenkins(interviews.getJenkins());
             responseDTO.setDevops(interviews.getDevops());
+            // Calculate and set average_Interviews
+            float sum = interviews.getUnix() + interviews.getSequel() + interviews.getJava() + interviews.getTesting() +
+                    interviews.getPython() + interviews.getAiml() + interviews.getAzure() + interviews.getGit() +
+                    interviews.getJenkins() + interviews.getDevops();
+            float averageMarks = sum / 10;
+            responseDTO.setAverage_interviews(averageMarks);
+
+            // Set marks_rating based on average_marks
+            String marksRating;
+            if (averageMarks >= 8) {
+                marksRating = "Excellent";
+            } else if (averageMarks >= 6) {
+                marksRating = "Good";
+            } else if (averageMarks >= 4) {
+                marksRating = "Average";
+            } else {
+                marksRating = "Poor";
+            }
+            responseDTO.setInterviews_rating(marksRating);
 
             return ResponseEntity.ok(responseDTO);
         } else {
@@ -136,10 +156,32 @@ public class InterviewsController {
                 }
             });
 
+            InterviewsDTO responseDTO = new InterviewsDTO();
+            responseDTO.setInterviews_id(existingInterviews.getInterviews_id());
+            // Calculate and set average_marks
+            float sum = existingInterviews.getUnix() + existingInterviews.getSequel() + existingInterviews.getJava() + existingInterviews.getTesting() +
+                    existingInterviews.getPython() +existingInterviews.getAiml() + existingInterviews.getAzure() + existingInterviews.getGit() +
+                    existingInterviews.getJenkins() +existingInterviews.getDevops();
+            float averageInterviews = sum / 10;
+
+            responseDTO.setAverage_interviews(averageInterviews);
+
+            // Set marks_rating based on average_marks
+            String interviewsRating;
+            if (averageInterviews >= 8) {
+                interviewsRating = "Excellent";
+            } else if (averageInterviews >= 6) {
+                interviewsRating = "Good";
+            } else if (averageInterviews >= 4) {
+                interviewsRating = "Average";
+            } else {
+                interviewsRating = "Poor";
+            }
+            responseDTO.setInterviews_rating(interviewsRating);
             interviewsRepository.save(existingInterviews);
-            return ResponseEntity.ok("Interviews updated successfully");
+            return ResponseEntity.ok("Interview Ratings updated successfully");
         } else {
-            throw new ResourceNotFoundException("Interviews with emp_id " + emp_id + " and interviews_id " + interviews_id + " not found");
+            throw new ResourceNotFoundException("Interview Ratings with emp_id " + emp_id + " and interviews_id " + interviews_id + " not found");
         }
     }
 

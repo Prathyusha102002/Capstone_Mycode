@@ -69,6 +69,25 @@ public class MarksController {
             responseDTO.setGit(marks.getGit());
             responseDTO.setJenkins(marks.getJenkins());
             responseDTO.setDevops(marks.getDevops());
+            // Calculate and set average_marks
+            float sum = marks.getUnix() + marks.getSequel() + marks.getJava() + marks.getTesting() +
+                    marks.getPython() + marks.getAiml() + marks.getAzure() + marks.getGit() +
+                    marks.getJenkins() + marks.getDevops();
+            float averageMarks = sum / 10;
+            responseDTO.setAverage_marks(averageMarks);
+
+            // Set marks_rating based on average_marks
+            String marksRating;
+            if (averageMarks >= 8) {
+                marksRating = "Excellent";
+            } else if (averageMarks >= 6) {
+                marksRating = "Good";
+            } else if (averageMarks >= 4) {
+                marksRating = "Average";
+            } else {
+                marksRating = "Poor";
+            }
+            responseDTO.setMarks_rating(marksRating);
 
             return ResponseEntity.ok(responseDTO);
         } else {
@@ -136,7 +155,28 @@ public class MarksController {
                         break;
                 }
             });
+            MarksDTO responseDTO = new MarksDTO();
+            responseDTO.setMarks_id(existingMarks.getMarks_id());
+            // Calculate and set average_marks
+            float sum = existingMarks.getUnix() + existingMarks.getSequel() + existingMarks.getJava() + existingMarks.getTesting() +
+                    existingMarks.getPython() +existingMarks.getAiml() + existingMarks.getAzure() + existingMarks.getGit() +
+                    existingMarks.getJenkins() + existingMarks.getDevops();
+            float averageMarks = sum / 10;
 
+            responseDTO.setAverage_marks(averageMarks);
+
+            // Set marks_rating based on average_marks
+            String marksRating;
+            if (averageMarks >= 8) {
+                marksRating = "Excellent";
+            } else if (averageMarks >= 6) {
+                marksRating = "Good";
+            } else if (averageMarks >= 4) {
+                marksRating = "Average";
+            } else {
+                marksRating = "Poor";
+            }
+            responseDTO.setMarks_rating(marksRating);
             marksRepository.save(existingMarks);
             return ResponseEntity.ok("Marks updated successfully");
         } else {

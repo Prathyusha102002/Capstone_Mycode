@@ -51,6 +51,33 @@ public class Marks {
     @Column(name = "devops")
     private Float devops;
 
+    // Additional fields
+    @Transient
+    private Float average_marks;
+
+    @Transient
+    private String marks_rating;
+
+    // Calculate average_marks
+    @PostLoad
+    public void calculateAverageMarks() {
+        float totalMarks = unix + sequel + java + testing + python + aiml + azure + git + jenkins + devops;
+        average_marks = totalMarks / 10;
+        calculateMarksRating();
+    }
+
+    // Calculate marks_rating based on average_marks
+    private void calculateMarksRating() {
+        if (average_marks >= 9.0) {
+            marks_rating = "Excellent";
+        } else if (average_marks >= 7.0) {
+            marks_rating = "Good";
+        } else if (average_marks >= 5.0) {
+            marks_rating = "Average";
+        } else {
+            marks_rating = "Poor";
+        }
+    }
 
 
     @Override
