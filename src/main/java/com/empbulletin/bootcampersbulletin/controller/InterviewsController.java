@@ -2,7 +2,6 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.DTO.InterviewsDTO;
-import com.empbulletin.bootcampersbulletin.DTO.MarksDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.model.Employee;
 import com.empbulletin.bootcampersbulletin.model.Interviews;
@@ -16,7 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/Interviews")
+@RequestMapping("/interviews")
 public class InterviewsController {
     @Autowired
     private InterviewsRepository interviewsRepository;
@@ -24,28 +23,41 @@ public class InterviewsController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-
+    // posting interview ratings for Employee
     @PostMapping("/save/{emp_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Interviews saveInterviewsForEmployee(@PathVariable Long emp_id, @RequestBody Interviews interviews) {
+    public ResponseEntity<Interviews> saveInterviewsForEmployee(@PathVariable Long emp_id, @RequestBody Interviews interviews) {
         Optional<Employee> employeeOptional = employeeRepository.findById(emp_id);
         if (employeeOptional.isPresent()) {
             Employee employee = employeeOptional.get();
             interviews.setEmployee(employee);
-            return interviewsRepository.save(interviews);
+
+            // Save interviews
+            Interviews savedInterviews = interviewsRepository.save(interviews);
+
+            // Calculate average interviews and interview_feedback
+            savedInterviews.calculateAverageInterviews();
+
+            // Save the updated interviews
+            savedInterviews = interviewsRepository.save(savedInterviews);
+
+            return ResponseEntity.ok(savedInterviews);
         } else {
             throw new ResourceNotFoundException("Employee with id " + emp_id + " not found");
         }
     }
 
-    @GetMapping("/{emp_id}/{interviews_id}")
+    //fetching employee interview ratings and feedback
+    @GetMapping("/{emp_id}/{interview_id}")
     public ResponseEntity<InterviewsDTO> getInterviewResult(
             @PathVariable Long emp_id,
-            @PathVariable Long interviews_id) {
+            @PathVariable Long interview_id) {
 
-        Optional<Interviews> interviewsOptional = Optional.ofNullable(interviewsRepository.findByEmpIdAndInterviewsId(emp_id, interviews_id));
+        Optional<Interviews> interviewsOptional = Optional.ofNullable(interviewsRepository.findByEmpIdAndInterviewsId(emp_id, interview_id));
         if (interviewsOptional.isPresent()) {
             Interviews interviews = interviewsOptional.get();
+            interviews.calculateAverageInterviews(); // Calculate average interviews and feedback
+
             InterviewsDTO responseDTO = new InterviewsDTO();
             responseDTO.setInterviews_id(interviews.getInterviews_id());
 
@@ -69,31 +81,18 @@ public class InterviewsController {
             responseDTO.setGit(interviews.getGit());
             responseDTO.setJenkins(interviews.getJenkins());
             responseDTO.setDevops(interviews.getDevops());
-            // Calculate and set average_Interviews
-            float sum = interviews.getUnix() + interviews.getSequel() + interviews.getJava() + interviews.getTesting() +
-                    interviews.getPython() + interviews.getAiml() + interviews.getAzure() + interviews.getGit() +
-                    interviews.getJenkins() + interviews.getDevops();
-            float averageMarks = sum / 10;
-            responseDTO.setAverage_interviews(averageMarks);
 
-            // Set marks_rating based on average_marks
-            String interviewFeedback;
-            if (averageMarks >= 8) {
-                interviewFeedback = "Excellent";
-            } else if (averageMarks >= 6) {
-                interviewFeedback = "Good";
-            } else if (averageMarks >= 4) {
-                interviewFeedback = "Average";
-            } else {
-                interviewFeedback = "Poor";
-            }
-            responseDTO.setInterviews_feedback(interviewFeedback);
+            // Set calculated average_interviews and interviews_feedback
+            responseDTO.setAverage_interviews(interviews.getAverage_interviews());
+            responseDTO.setInterviews_feedback(interviews.getInterviews_feedback());
 
             return ResponseEntity.ok(responseDTO);
         } else {
             throw new ResourceNotFoundException("Interviews not found for Employee with id " + emp_id);
         }
     }
+
+    // Deleting Employee interview ratings details
 
     @DeleteMapping("/{emp_id}/{interviews_id}")
     public String deleteInterviewsForEmployee(
@@ -108,13 +107,13 @@ public class InterviewsController {
         }
     }
 
-
-    @PutMapping("/{emp_id}/{interviews_id}")
+    //updating employee interviews and recalculating the averages and feedback
+    @PutMapping("/{emp_id}/{interview_id}")
     public ResponseEntity<String> updateInterviewsForEmployee(
             @PathVariable Long emp_id,
-            @PathVariable Long interviews_id,
+            @PathVariable Long interview_id,
             @RequestBody Map<String, Float> updatedInterviews) { // Accept a map of subject marks
-        Optional<Interviews> interviewsOptional = Optional.ofNullable(interviewsRepository.findByEmpIdAndInterviewsId(emp_id, interviews_id));
+        Optional<Interviews> interviewsOptional = Optional.ofNullable(interviewsRepository.findByEmpIdAndInterviewsId(emp_id, interview_id));
         if (interviewsOptional.isPresent()) {
             Interviews existingInterviews = interviewsOptional.get();
             // Update only the subjects that are present in the request
@@ -156,32 +155,13 @@ public class InterviewsController {
                 }
             });
 
-            InterviewsDTO responseDTO = new InterviewsDTO();
-            responseDTO.setInterviews_id(existingInterviews.getInterviews_id());
-            // Calculate and set average_marks
-            float sum = existingInterviews.getUnix() + existingInterviews.getSequel() + existingInterviews.getJava() + existingInterviews.getTesting() +
-                    existingInterviews.getPython() +existingInterviews.getAiml() + existingInterviews.getAzure() + existingInterviews.getGit() +
-                    existingInterviews.getJenkins() +existingInterviews.getDevops();
-            float averageInterviews = sum / 10;
+            // Recalculate average interviews and feedback
+            existingInterviews.calculateAverageInterviews();
 
-            responseDTO.setAverage_interviews(averageInterviews);
-
-            // Set marks_rating based on average_marks
-            String interviewsFeedback;
-            if (averageInterviews >= 8) {
-                interviewsFeedback = "Excellent";
-            } else if (averageInterviews >= 6) {
-                interviewsFeedback = "Good";
-            } else if (averageInterviews >= 4) {
-                interviewsFeedback = "Average";
-            } else {
-                interviewsFeedback = "Poor";
-            }
-            responseDTO.setInterviews_feedback(interviewsFeedback);
             interviewsRepository.save(existingInterviews);
             return ResponseEntity.ok("Interview Ratings updated successfully");
         } else {
-            throw new ResourceNotFoundException("Interview Ratings with emp_id " + emp_id + " and interviews_id " + interviews_id + " not found");
+            throw new ResourceNotFoundException("Interviews with emp_id " + emp_id + " and interview_id " + interview_id + " not found");
         }
     }
 

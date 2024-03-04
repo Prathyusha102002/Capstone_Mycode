@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/api/v1/admin")
 public class AdminController {
 
     @Autowired

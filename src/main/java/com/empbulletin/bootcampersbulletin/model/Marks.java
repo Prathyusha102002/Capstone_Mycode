@@ -30,33 +30,42 @@ public class Marks {
     private Map<String, Float> subjectMarks = new HashMap<>();
 
 
-    @Column(name = "unix")
-    private Float unix;
-    @Column(name = "sequel")
-    private Float  sequel;
-    @Column(name = "java")
-    private Float  java;
-    @Column(name = "testing")
-    private Float testing;
-    @Column(name = "python")
-    private Float python;
-    @Column(name = "aiml")
-    private Float aiml;
-    @Column(name = "azure")
-    private Float azure;
-    @Column(name = "git")
-    private Float git;
-    @Column(name = "jenkins")
-    private Float jenkins;
-    @Column(name = "devops")
-    private Float devops;
+    @Column(name = "unix", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float unix = 0.0f;
+
+    @Column(name = "sequel", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float sequel = 0.0f;
+
+    @Column(name = "java", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float java = 0.0f;
+
+    @Column(name = "testing", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float testing = 0.0f;
+
+    @Column(name = "python", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float python = 0.0f;
+
+    @Column(name = "aiml", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float aiml = 0.0f;
+
+    @Column(name = "azure", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float azure = 0.0f;
+
+    @Column(name = "git", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float git = 0.0f;
+
+    @Column(name = "jenkins", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float jenkins = 0.0f;
+
+    @Column(name = "devops", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float devops = 0.0f;
 
     // Additional fields
     @Transient
     private Float average_marks;
 
     @Transient
-    private String marks_rating;
+    private String marks_feedback;
 
     // Calculate average_marks
     @PostLoad
@@ -68,14 +77,13 @@ public class Marks {
 
     // Calculate marks_rating based on average_marks
     private void calculateMarksRating() {
-        if (average_marks >= 9.0) {
-            marks_rating = "Excellent";
-        } else if (average_marks >= 7.0) {
-            marks_rating = "Good";
-        } else if (average_marks >= 5.0) {
-            marks_rating = "Average";
-        } else {
-            marks_rating = "Poor";
+        if (average_marks >= 25*0.8) {
+            marks_feedback = "Excellent";
+        } else if (average_marks < 25*0.8 | average_marks>=25*0.6) {
+            marks_feedback = "Satisfactory";
+        }
+         else {
+            marks_feedback = "Need to Improve";
         }
     }
 

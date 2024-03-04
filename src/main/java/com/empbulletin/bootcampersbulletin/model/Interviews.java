@@ -17,26 +17,43 @@ public class Interviews {
     @JoinColumn(name = "emp_id", referencedColumnName = "emp_id")
     private Employee employee;
 
-    @Column(name = "unix")
-    private Float unix;
-    @Column(name = "sequel")
-    private Float  sequel;
-    @Column(name = "java")
-    private Float  java;
-    @Column(name = "testing")
-    private Float testing;
-    @Column(name = "python")
-    private Float python;
-    @Column(name = "aiml")
-    private Float aiml;
-    @Column(name = "azure")
-    private Float azure;
-    @Column(name = "git")
-    private Float git;
-    @Column(name = "jenkins")
-    private Float jenkins;
-    @Column(name = "devops")
-    private Float devops;
+    @Column(name = "unix", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float unix = 0.0f;
+
+    @Column(name = "sequel", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float sequel = 0.0f;
+
+    @Column(name = "java", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float java = 0.0f;
+
+    @Column(name = "testing", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float testing = 0.0f;
+
+    @Column(name = "python", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float python = 0.0f;
+
+    @Column(name = "aiml", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float aiml = 0.0f;
+
+    @Column(name = "azure", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float azure = 0.0f;
+
+    @Column(name = "git", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float git = 0.0f;
+
+    @Column(name = "jenkins", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float jenkins = 0.0f;
+
+    @Column(name = "devops", columnDefinition = "FLOAT DEFAULT 0.0")
+    private Float devops = 0.0f;
+
+
+    // Additional fields
+    @Transient
+    private Float average_interviews;
+
+    @Transient
+    private String interviews_feedback;
 
     public Interviews() {
     }
@@ -55,12 +72,7 @@ public class Interviews {
         this.jenkins = jenkins;
         this.devops = devops;
     }
-    // Additional fields
-    @Transient
-    private Float average_interviews;
 
-    @Transient
-    private String interviews_rating;
 
     // Calculate average_marks
     @PostLoad
@@ -72,14 +84,13 @@ public class Interviews {
 
     // Calculate marks_rating based on average_marks
     private void calculateInterviewsRating() {
-        if (average_interviews >= 9.0) {
-            interviews_rating = "Excellent";
-        } else if (average_interviews >= 7.0) {
-            interviews_rating = "Good";
-        } else if (average_interviews >= 5.0) {
-            interviews_rating = "Average";
-        } else {
-            interviews_rating = "Poor";
+        if (average_interviews >= 25*0.8) {
+            interviews_feedback = "Excellent";
+        } else if (average_interviews >= 25*0.8 | average_interviews<25*0.6) {
+            interviews_feedback  = "Satisfactory";
+        }
+        else {
+            interviews_feedback  = "Need to Improve";
         }
     }
 

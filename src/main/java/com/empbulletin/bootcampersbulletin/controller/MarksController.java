@@ -25,20 +25,29 @@ public class MarksController {
     private EmployeeRepository employeeRepository;
 
     // Enter marks for Employee
+
     @PostMapping("/save/{emp_id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Marks saveMarksForEmployee(@PathVariable Long emp_id, @RequestBody Marks marks) {
+    public ResponseEntity<Marks> saveMarksForEmployee(@PathVariable Long emp_id, @RequestBody Marks marks) {
         Optional<Employee> employeeOptional = employeeRepository.findById(emp_id);
         if (employeeOptional.isPresent()) {
             Employee employee = employeeOptional.get();
             marks.setEmployee(employee);
-            return marksRepository.save(marks);
+
+            // Calculate average_marks and marks_feedback
+            marks.calculateAverageMarks();
+
+            Marks savedMarks = marksRepository.save(marks);
+            return ResponseEntity.ok(savedMarks);
         } else {
             throw new ResourceNotFoundException("Employee with id " + emp_id + " not found");
         }
     }
 
-    // Fetch Employee Marks details
+
+
+    // Fetch Employee Marks details and feedback
+
     @GetMapping("/{emp_id}/{marks_id}")
     public ResponseEntity<MarksDTO> getAssessmentResult(
             @PathVariable Long emp_id,
@@ -47,6 +56,8 @@ public class MarksController {
         Optional<Marks> marksOptional = Optional.ofNullable(marksRepository.findByEmpIdAndMarksId(emp_id, marks_id));
         if (marksOptional.isPresent()) {
             Marks marks = marksOptional.get();
+            marks.calculateAverageMarks(); // Calculate average_marks and marks_feedback
+
             MarksDTO responseDTO = new MarksDTO();
             responseDTO.setMarks_id(marks.getMarks_id());
 
@@ -70,25 +81,10 @@ public class MarksController {
             responseDTO.setGit(marks.getGit());
             responseDTO.setJenkins(marks.getJenkins());
             responseDTO.setDevops(marks.getDevops());
-            // Calculate and set average_marks
-            float sum = marks.getUnix() + marks.getSequel() + marks.getJava() + marks.getTesting() +
-                    marks.getPython() + marks.getAiml() + marks.getAzure() + marks.getGit() +
-                    marks.getJenkins() + marks.getDevops();
-            float averageMarks = sum / 10;
-            responseDTO.setAverage_marks(averageMarks);
 
-            // Set marks_rating based on average_marks
-            String marksFeedback;
-            if (averageMarks >= 8) {
-                marksFeedback = "Excellent";
-            } else if (averageMarks >= 6) {
-                marksFeedback = "Good";
-            } else if (averageMarks >= 4) {
-                marksFeedback = "Average";
-            } else {
-                marksFeedback = "Poor";
-            }
-            responseDTO.setMarks_feedback(marksFeedback);
+            // Set calculated average_marks and marks_feedback
+            responseDTO.setAverage_marks(marks.getAverage_marks());
+            responseDTO.setMarks_feedback(marks.getMarks_feedback());
 
             return ResponseEntity.ok(responseDTO);
         } else {
@@ -96,7 +92,7 @@ public class MarksController {
         }
     }
 
-    // Delete Employee Marks details
+    // Deleting Employee Marks details
     @DeleteMapping("/{emp_id}/{marks_id}")
     public String deleteMarksForEmployee(
             @PathVariable Long emp_id,
@@ -109,80 +105,64 @@ public class MarksController {
             throw new ResourceNotFoundException("Marks with emp_id " + emp_id + " and marks_id " + marks_id + " not found");
         }
     }
-
-    @PutMapping("/{emp_id}/{marks_id}")
-    public ResponseEntity<String> updateMarksForEmployee(
-            @PathVariable Long emp_id,
-            @PathVariable Long marks_id,
-            @RequestBody Map<String, Float> updatedMarks) { // Accept a map of subject marks
-        Optional<Marks> marksOptional = Optional.ofNullable(marksRepository.findByEmpIdAndMarksId(emp_id, marks_id));
-        if (marksOptional.isPresent()) {
-            Marks existingMarks = marksOptional.get();
-            // Update only the subjects that are present in the request
-            updatedMarks.forEach((subject, marks) -> {
-                switch (subject.toLowerCase()) {
-                    case "unix":
-                        existingMarks.setUnix(marks);
-                        break;
-                    case "sequel":
-                        existingMarks.setSequel(marks);
-                        break;
-                    case "java":
-                        existingMarks.setJava(marks);
-                        break;
-                    case "testing":
-                        existingMarks.setTesting(marks);
-                        break;
-                    case "python":
-                        existingMarks.setPython(marks);
-                        break;
-                    case "aiml":
-                        existingMarks.setAiml(marks);
-                        break;
-                    case "azure":
-                        existingMarks.setAzure(marks);
-                        break;
-                    case "git":
-                        existingMarks.setGit(marks);
-                        break;
-                    case "jenkins":
-                        existingMarks.setJenkins(marks);
-                        break;
-                    case "devops":
-                        existingMarks.setDevops(marks);
-                        break;
-                    default:
-                        // Ignore unknown subjects
-                        break;
-                }
-            });
-            MarksDTO responseDTO = new MarksDTO();
-            responseDTO.setMarks_id(existingMarks.getMarks_id());
-            // Calculate and set average_marks
-            float sum = existingMarks.getUnix() + existingMarks.getSequel() + existingMarks.getJava() + existingMarks.getTesting() +
-                    existingMarks.getPython() +existingMarks.getAiml() + existingMarks.getAzure() + existingMarks.getGit() +
-                    existingMarks.getJenkins() + existingMarks.getDevops();
-            float averageMarks = sum / 10;
-
-            responseDTO.setAverage_marks(averageMarks);
-
-            // Set marks_rating based on average_marks
-            String marksFeedback;
-            if (averageMarks >= 8) {
-                marksFeedback = "Excellent";
-            } else if (averageMarks >= 6) {
-                marksFeedback = "Good";
-            } else if (averageMarks >= 4) {
-                marksFeedback = "Average";
-            } else {
-                marksFeedback = "Poor";
+//updating employee marks and recalculating the averages and generating feedback
+@PutMapping("/{emp_id}/{marks_id}")
+public ResponseEntity<String> updateMarksForEmployee(
+        @PathVariable Long emp_id,
+        @PathVariable Long marks_id,
+        @RequestBody Map<String, Float> updatedMarks) { // Accept a map of subject marks
+    Optional<Marks> marksOptional = Optional.ofNullable(marksRepository.findByEmpIdAndMarksId(emp_id, marks_id));
+    if (marksOptional.isPresent()) {
+        Marks existingMarks = marksOptional.get();
+        // Update only the subjects that are present in the request
+        updatedMarks.forEach((subject, marks) -> {
+            switch (subject.toLowerCase()) {
+                case "unix":
+                    existingMarks.setUnix(marks);
+                    break;
+                case "sequel":
+                    existingMarks.setSequel(marks);
+                    break;
+                case "java":
+                    existingMarks.setJava(marks);
+                    break;
+                case "testing":
+                    existingMarks.setTesting(marks);
+                    break;
+                case "python":
+                    existingMarks.setPython(marks);
+                    break;
+                case "aiml":
+                    existingMarks.setAiml(marks);
+                    break;
+                case "azure":
+                    existingMarks.setAzure(marks);
+                    break;
+                case "git":
+                    existingMarks.setGit(marks);
+                    break;
+                case "jenkins":
+                    existingMarks.setJenkins(marks);
+                    break;
+                case "devops":
+                    existingMarks.setDevops(marks);
+                    break;
+                default:
+                    // Ignore unknown subjects
+                    break;
             }
-            responseDTO.setMarks_feedback(marksFeedback);
-            marksRepository.save(existingMarks);
-            return ResponseEntity.ok("Marks updated successfully");
-        } else {
-            throw new ResourceNotFoundException("Marks with emp_id " + emp_id + " and marks_id " + marks_id + " not found");
-        }
+        });
+
+        // Calculate average_marks and marks_feedback
+        existingMarks.calculateAverageMarks();
+        String marksFeedback = existingMarks.getMarks_feedback();
+
+        marksRepository.save(existingMarks);
+        return ResponseEntity.ok("Marks updated successfully.");
+    } else {
+        throw new ResourceNotFoundException("Marks with emp_id " + emp_id + " and marks_id " + marks_id + " not found");
     }
+}
+
 
 }
