@@ -77,20 +77,69 @@ public class Interviews {
     // Calculate average_marks
     @PostLoad
     public void calculateAverageInterviews() {
-        float totalInterviews = unix + sequel + java + testing + python + aiml + azure + git + jenkins + devops;
-        average_interviews = totalInterviews / 10;
+        float totalInterviews = 0;
+        int numberOfSubjects = 0;
+
+        // Check each subject's interviews and add to total if not zero
+        if (unix != 0) {
+            totalInterviews += unix;
+            numberOfSubjects++;
+        }
+        if (sequel != 0) {
+            totalInterviews += sequel;
+            numberOfSubjects++;
+        }
+        if (java != 0) {
+            totalInterviews += java;
+            numberOfSubjects++;
+        }
+        if (testing != 0) {
+            totalInterviews += testing;
+            numberOfSubjects++;
+        }
+        if (python != 0) {
+            totalInterviews += python;
+            numberOfSubjects++;
+        }
+        if (aiml != 0) {
+            totalInterviews += aiml;
+            numberOfSubjects++;
+        }
+        if (azure != 0) {
+            totalInterviews += azure;
+            numberOfSubjects++;
+        }
+        if (git != 0) {
+            totalInterviews += git;
+            numberOfSubjects++;
+        }
+        if (jenkins != 0) {
+            totalInterviews += jenkins;
+            numberOfSubjects++;
+        }
+        if (devops != 0) {
+            totalInterviews += devops;
+            numberOfSubjects++;
+        }
+        // Avoid division by zero
+        if (numberOfSubjects != 0) {
+            average_interviews = totalInterviews / numberOfSubjects;
+        } else {
+            // Handle the case where all marks are zero
+            average_interviews = 0.0f;
+        }
         calculateInterviewsRating();
     }
 
-    // Calculate marks_rating based on average_marks
+    // Calculate interviews_rating based on average_interviews
     private void calculateInterviewsRating() {
-        if (average_interviews >= 25*0.8) {
+        float percentage = (average_interviews / 10) * 100; // Assuming maximum interview ratings is 10 for each subject
+        if (percentage >= 80) {
             interviews_feedback = "Excellent";
-        } else if (average_interviews >= 25*0.8 | average_interviews<25*0.6) {
-            interviews_feedback  = "Satisfactory";
-        }
-        else {
-            interviews_feedback  = "Need to Improve";
+        } else if (percentage >= 60 | percentage <80) {
+            interviews_feedback = "Satisfactory";
+        } else {
+            interviews_feedback = "Need to Improve";
         }
     }
 

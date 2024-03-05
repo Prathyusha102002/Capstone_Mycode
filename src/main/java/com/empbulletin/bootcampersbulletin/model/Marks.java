@@ -70,19 +70,70 @@ public class Marks {
     // Calculate average_marks
     @PostLoad
     public void calculateAverageMarks() {
-        float totalMarks = unix + sequel + java + testing + python + aiml + azure + git + jenkins + devops;
-        average_marks = totalMarks / 10;
+        float totalMarks = 0;
+        int numberOfSubjects = 0;
+
+        // Check each subject's marks and add to total if not zero
+        if (unix != 0) {
+            totalMarks += unix;
+            numberOfSubjects++;
+        }
+        if (sequel != 0) {
+            totalMarks += sequel;
+            numberOfSubjects++;
+        }
+        if (java !=0)
+        {
+            totalMarks += java;
+            numberOfSubjects++;
+        }
+        if (testing !=0)
+        {
+            totalMarks += testing;
+            numberOfSubjects++;
+        }if (python !=0)
+        {
+            totalMarks += python;
+            numberOfSubjects++;
+        }if (aiml !=0)
+        {
+            totalMarks += aiml;
+            numberOfSubjects++;
+        }if (azure !=0)
+        {
+            totalMarks += azure;
+            numberOfSubjects++;
+        }if (git !=0)
+        {
+            totalMarks += git;
+            numberOfSubjects++;
+        }if (jenkins !=0)
+        {
+            totalMarks += jenkins;
+            numberOfSubjects++;
+        }if (devops !=0)
+        {
+            totalMarks += devops;
+            numberOfSubjects++;
+        }
+        // Avoid division by zero
+        if (numberOfSubjects != 0) {
+            average_marks = totalMarks / numberOfSubjects;
+        } else {
+            // Handle the case where all marks are zero
+            average_marks = 0.0f;
+        }
         calculateMarksRating();
     }
 
     // Calculate marks_rating based on average_marks
     private void calculateMarksRating() {
-        if (average_marks >= 25*0.8) {
+        float percentage = (average_marks / 25) * 100; // Assuming maximum marks is 25 for each subject
+        if (percentage >= 80) {
             marks_feedback = "Excellent";
-        } else if (average_marks < 25*0.8 | average_marks>=25*0.6) {
+        } else if (percentage >= 60 | percentage <80) {
             marks_feedback = "Satisfactory";
-        }
-         else {
+        } else {
             marks_feedback = "Need to Improve";
         }
     }
