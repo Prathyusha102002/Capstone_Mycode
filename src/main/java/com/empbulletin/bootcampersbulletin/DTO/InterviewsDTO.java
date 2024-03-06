@@ -19,6 +19,6 @@ public class InterviewsDTO {
     private Float git;
     private Float jenkins;
     private Float devops;
-    private Float average_interviews; // New field
+    private Float average_interviews; // Transient variables
     private String interviews_feedback;
 }

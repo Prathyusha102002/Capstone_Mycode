@@ -1,7 +1,6 @@
 package com.empbulletin.bootcampersbulletin.repository;
 
 import com.empbulletin.bootcampersbulletin.model.Interviews;
-import com.empbulletin.bootcampersbulletin.model.Marks;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

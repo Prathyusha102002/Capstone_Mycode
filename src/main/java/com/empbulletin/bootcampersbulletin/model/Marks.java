@@ -23,11 +23,11 @@ public class Marks {
 
 
 
-    @ElementCollection
-    @CollectionTable(name = "subject_marks", joinColumns = @JoinColumn(name = "marks_id"))
-    @MapKeyColumn(name = "subject_name")
-    @Column(name = "marks")
-    private Map<String, Float> subjectMarks = new HashMap<>();
+//    @ElementCollection
+//    @CollectionTable(name = "subject_marks", joinColumns = @JoinColumn(name = "marks_id"))
+//    @MapKeyColumn(name = "subject_name")
+//    @Column(name = "marks")
+//    private Map<String, Float> subjectMarks = new HashMap<>();
 
 
     @Column(name = "unix", columnDefinition = "FLOAT DEFAULT 0.0")
@@ -60,14 +60,14 @@ public class Marks {
     @Column(name = "devops", columnDefinition = "FLOAT DEFAULT 0.0")
     private Float devops = 0.0f;
 
-    // Additional fields
+    // Transient variables
     @Transient
     private Float average_marks;
 
     @Transient
     private String marks_feedback;
 
-    // Calculate average_marks
+    // Calculating average_marks
     @PostLoad
     public void calculateAverageMarks() {
         float totalMarks = 0;
@@ -126,7 +126,7 @@ public class Marks {
         calculateMarksRating();
     }
 
-    // Calculate marks_rating based on average_marks
+    // Calculating Marks Feedback
     private void calculateMarksRating() {
         float percentage = (average_marks / 25) * 100; // Assuming maximum marks is 25 for each subject
         if (percentage >= 80) {
@@ -174,103 +174,6 @@ public class Marks {
         this.azure = azure;
         this.git = git;
         this.jenkins = jenkins;
-        this.devops = devops;
-    }
-
-    public Long getMarks_id()
-    {
-        return marks_id;
-    }
-
-    public void setMarks_id(Long marks_id) {
-        this.marks_id = marks_id;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Float getUnix() {
-        return unix;
-    }
-
-    public void setUnix(Float unix) {
-        this.unix = unix;
-    }
-
-    public Float getSequel() {
-        return sequel;
-    }
-
-    public void setSequel(Float sequel) {
-        this.sequel = sequel;
-    }
-
-    public Float getJava() {
-        return java;
-    }
-
-    public void setJava(Float java) {
-        this.java = java;
-    }
-
-    public Float getTesting() {
-        return testing;
-    }
-
-    public void setTesting(Float testing) {
-        this.testing = testing;
-    }
-
-    public Float getPython() {
-        return python;
-    }
-
-    public void setPython(Float python) {
-        this.python = python;
-    }
-
-    public Float getAiml() {
-        return aiml;
-    }
-
-    public void setAiml(Float aiml) {
-        this.aiml = aiml;
-    }
-
-    public Float getAzure() {
-        return azure;
-    }
-
-    public void setAzure(Float azure) {
-        this.azure = azure;
-    }
-
-    public Float getGit() {
-        return git;
-    }
-
-    public void setGit(Float git) {
-        this.git = git;
-    }
-
-    public Float getJenkins() {
-        return jenkins;
-    }
-
-    public void setJenkins(Float jenkins) {
-        this.jenkins = jenkins;
-    }
-
-    public Float getDevops() {
-        return devops;
-    }
-
-    public void setDevops(Float devops) {
         this.devops = devops;
     }
 

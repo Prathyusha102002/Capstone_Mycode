@@ -48,7 +48,7 @@ public class Interviews {
     private Float devops = 0.0f;
 
 
-    // Additional fields
+    // Transient variables
     @Transient
     private Float average_interviews;
 
@@ -74,7 +74,7 @@ public class Interviews {
     }
 
 
-    // Calculate average_marks
+    // Calculating average_marks
     @PostLoad
     public void calculateAverageInterviews() {
         float totalInterviews = 0;
@@ -131,7 +131,7 @@ public class Interviews {
         calculateInterviewsRating();
     }
 
-    // Calculate interviews_rating based on average_interviews
+    // Calculating Interview Feedback
     private void calculateInterviewsRating() {
         float percentage = (average_interviews / 10) * 100; // Assuming maximum interview ratings is 10 for each subject
         if (percentage >= 80) {

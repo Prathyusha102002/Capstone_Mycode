@@ -52,6 +52,7 @@ public class AdminController {
             throw new ResourceNotFoundException("Employee with id " + id + " not found");
         }
     }
+    //Get all employees under the Batch_number
     @GetMapping("/batch/{batchNo}")
     public List<EmployeeDTO> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
         List<Employee> employees = employeeRepository.findByBatchNo(batchNo);
@@ -76,21 +77,7 @@ public class AdminController {
         return employeeRepository.save(employee);
     }
 
-    // Update existing employee
-//    @PutMapping("/{id}")
-//    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employeeDetails) {
-//        Employee employee = employeeRepository.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id));
-//
-//        employee.setEmp_name(employeeDetails.getEmp_name());
-//        employee.setEmp_mail(employeeDetails.getEmp_mail());
-//        employee.setBatchNo(employeeDetails.getBatchNo());
-//
-//        return employeeRepository.save(employee);
-//    }
-
-
-
+    //Updating employee details by emp_id
     @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Map<String, Object> employeeDetails) {
         Employee employee = employeeRepository.findById(id)
@@ -119,20 +106,11 @@ public class AdminController {
     }
 
 
-    // Delete employee
+    // Delete employee by emp_id
     @DeleteMapping("/{id}")
     public void deleteEmployee(@PathVariable Long id) {
         employeeRepository.deleteById(id);
     }
 
 
-//    Have to do.............!!!!!!!!!!!!
-//    @PostMapping("/login")
-//    public String login(@RequestParam String name, @RequestParam String password) {
-//        if (adminService.authenticate(name, password)) {
-//            return "Login successful";
-//        } else {
-//            return "Login failed";
-//        }
-//    }
 }

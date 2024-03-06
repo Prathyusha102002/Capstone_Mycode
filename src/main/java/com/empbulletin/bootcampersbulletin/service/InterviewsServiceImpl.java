@@ -1,11 +1,8 @@
 package com.empbulletin.bootcampersbulletin.service;
 
 import com.empbulletin.bootcampersbulletin.model.Interviews;
-import com.empbulletin.bootcampersbulletin.model.Marks;
 import com.empbulletin.bootcampersbulletin.repository.EmployeeRepository;
 import com.empbulletin.bootcampersbulletin.repository.InterviewsRepository;
-import com.empbulletin.bootcampersbulletin.repository.MarksRepository;
-
 import java.util.List;
 
 public class InterviewsServiceImpl implements InterviewService {

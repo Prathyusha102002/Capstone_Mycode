@@ -1,7 +1,7 @@
 package com.empbulletin.bootcampersbulletin.service;
 
 import com.empbulletin.bootcampersbulletin.model.Interviews;
-import com.empbulletin.bootcampersbulletin.model.Marks;
+
 
 import java.util.List;
 

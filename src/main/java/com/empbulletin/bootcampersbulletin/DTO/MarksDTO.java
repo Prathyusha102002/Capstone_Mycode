@@ -18,6 +18,6 @@ public class MarksDTO {
     private Float git;
     private Float jenkins;
     private Float devops;
-    private Float average_marks; // New field
+    private Float average_marks; // Transient variables
     private String marks_feedback;
 }

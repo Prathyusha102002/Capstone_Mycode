@@ -22,7 +22,7 @@ public class EmployeeController {
 	private EmployeeService employeeService;
 
 	private java.util.stream.Collectors Collectors;
-
+	//Get all employees
 	@GetMapping
 	public List<EmployeeDTO> getAllEmployees() {
 		List<Employee> employees = eR.findAll();
@@ -56,8 +56,7 @@ public class EmployeeController {
 		}
 	}
 
-	// Get Employee details by batch No
-
+	// Get all Employees under batch No
 	@GetMapping("/batch/{batchNo}")
 	public List<EmployeeDTO> getEmployeesByBatchNo(@PathVariable Integer batchNo) {
 		List<Employee> employees = eR.findByBatchNo(batchNo);
