@@ -2,9 +2,12 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
+import com.empbulletin.bootcampersbulletin.model.Admin;
 import com.empbulletin.bootcampersbulletin.model.Employee;
+import com.empbulletin.bootcampersbulletin.repository.AdminRepository;
 import com.empbulletin.bootcampersbulletin.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +22,23 @@ public class AdminController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
+    // Admin login
+    @PostMapping("/login")
+    public ResponseEntity<String> adminLogin(
+            @RequestParam("name") String name,
+            @RequestParam("password") String password) {
+
+        // Check if an admin exists with the provided name and password
+        Admin admin = adminRepository.findByNameAndPassword(name, password);
+
+        if (admin != null) {
+            return ResponseEntity.ok("Login successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
+        }
+    }
 
     // Get all employees
     @GetMapping
