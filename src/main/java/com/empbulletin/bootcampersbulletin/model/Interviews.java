@@ -17,35 +17,35 @@ public class Interviews {
     @JoinColumn(name = "emp_id", referencedColumnName = "emp_id")
     private Employee employee;
 
-    @Column(name = "unix", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float unix = 0.0f;
+    @Column(name = "unix")
+    private Float unix ;
 
-    @Column(name = "sequel", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float sequel = 0.0f;
+    @Column(name = "sequel")
+    private Float sequel;
 
-    @Column(name = "java", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float java = 0.0f;
+    @Column(name = "java")
+    private Float java ;
 
-    @Column(name = "testing", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float testing = 0.0f;
+    @Column(name = "testing")
+    private Float testing ;
 
-    @Column(name = "python", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float python = 0.0f;
+    @Column(name = "python")
+    private Float python ;
 
-    @Column(name = "aiml", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float aiml = 0.0f;
+    @Column(name = "aiml")
+    private Float aiml ;
 
-    @Column(name = "azure", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float azure = 0.0f;
+    @Column(name = "azure")
+    private Float azure ;
 
-    @Column(name = "git", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float git = 0.0f;
+    @Column(name = "git")
+    private Float git;
 
-    @Column(name = "jenkins", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float jenkins = 0.0f;
+    @Column(name = "jenkins")
+    private Float jenkins ;
 
-    @Column(name = "devops", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float devops = 0.0f;
+    @Column(name = "devops")
+    private Float devops ;
 
 
     // Transient variables
@@ -75,49 +75,50 @@ public class Interviews {
 
 
     // Calculating average_marks
+
     @PostLoad
     public void calculateAverageInterviews() {
         float totalInterviews = 0;
         int numberOfSubjects = 0;
 
-        // Check each subject's interviews and add to total if not zero
-        if (unix != 0) {
+        // Check each subject's interviews and add to total if not null
+        if (unix != null) {
             totalInterviews += unix;
             numberOfSubjects++;
         }
-        if (sequel != 0) {
+        if (sequel != null) {
             totalInterviews += sequel;
             numberOfSubjects++;
         }
-        if (java != 0) {
+        if (java != null) {
             totalInterviews += java;
             numberOfSubjects++;
         }
-        if (testing != 0) {
+        if (testing != null) {
             totalInterviews += testing;
             numberOfSubjects++;
         }
-        if (python != 0) {
+        if (python != null) {
             totalInterviews += python;
             numberOfSubjects++;
         }
-        if (aiml != 0) {
+        if (aiml != null) {
             totalInterviews += aiml;
             numberOfSubjects++;
         }
-        if (azure != 0) {
+        if (azure != null) {
             totalInterviews += azure;
             numberOfSubjects++;
         }
-        if (git != 0) {
+        if (git != null) {
             totalInterviews += git;
             numberOfSubjects++;
         }
-        if (jenkins != 0) {
+        if (jenkins != null) {
             totalInterviews += jenkins;
             numberOfSubjects++;
         }
-        if (devops != 0) {
+        if (devops != null) {
             totalInterviews += devops;
             numberOfSubjects++;
         }
@@ -125,11 +126,12 @@ public class Interviews {
         if (numberOfSubjects != 0) {
             average_interviews = totalInterviews / numberOfSubjects;
         } else {
-            // Handle the case where all marks are zero
+            // Handle the case where all marks are null
             average_interviews = 0.0f;
         }
         calculateInterviewsRating();
     }
+
 
     // Calculating Interview Feedback
     private void calculateInterviewsRating() {

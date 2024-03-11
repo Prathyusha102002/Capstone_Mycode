@@ -22,43 +22,35 @@ public class Marks {
     private Employee employee;
 
 
+    @Column(name = "unix")
+    private Float unix ;
 
-//    @ElementCollection
-//    @CollectionTable(name = "subject_marks", joinColumns = @JoinColumn(name = "marks_id"))
-//    @MapKeyColumn(name = "subject_name")
-//    @Column(name = "marks")
-//    private Map<String, Float> subjectMarks = new HashMap<>();
+    @Column(name = "sequel")
+    private Float sequel;
 
+    @Column(name = "java")
+    private Float java ;
 
-    @Column(name = "unix", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float unix = 0.0f;
+    @Column(name = "testing")
+    private Float testing ;
 
-    @Column(name = "sequel", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float sequel = 0.0f;
+    @Column(name = "python")
+    private Float python ;
 
-    @Column(name = "java", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float java = 0.0f;
+    @Column(name = "aiml")
+    private Float aiml ;
 
-    @Column(name = "testing", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float testing = 0.0f;
+    @Column(name = "azure")
+    private Float azure ;
 
-    @Column(name = "python", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float python = 0.0f;
+    @Column(name = "git")
+    private Float git;
 
-    @Column(name = "aiml", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float aiml = 0.0f;
+    @Column(name = "jenkins")
+    private Float jenkins ;
 
-    @Column(name = "azure", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float azure = 0.0f;
-
-    @Column(name = "git", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float git = 0.0f;
-
-    @Column(name = "jenkins", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float jenkins = 0.0f;
-
-    @Column(name = "devops", columnDefinition = "FLOAT DEFAULT 0.0")
-    private Float devops = 0.0f;
+    @Column(name = "devops")
+    private Float devops ;
 
     // Transient variables
     @Transient
@@ -73,46 +65,44 @@ public class Marks {
         float totalMarks = 0;
         int numberOfSubjects = 0;
 
-        // Check each subject's marks and add to total if not zero
-        if (unix != 0) {
+        // Check each subject's marks and add to total if not null
+        if (unix != null) {
             totalMarks += unix;
             numberOfSubjects++;
         }
-        if (sequel != 0) {
+        if (sequel != null) {
             totalMarks += sequel;
             numberOfSubjects++;
         }
-        if (java !=0)
-        {
+        if (java != null) {
             totalMarks += java;
             numberOfSubjects++;
         }
-        if (testing !=0)
-        {
+        if (testing != null) {
             totalMarks += testing;
             numberOfSubjects++;
-        }if (python !=0)
-        {
+        }
+        if (python != null) {
             totalMarks += python;
             numberOfSubjects++;
-        }if (aiml !=0)
-        {
+        }
+        if (aiml != null) {
             totalMarks += aiml;
             numberOfSubjects++;
-        }if (azure !=0)
-        {
+        }
+        if (azure != null) {
             totalMarks += azure;
             numberOfSubjects++;
-        }if (git !=0)
-        {
+        }
+        if (git != null) {
             totalMarks += git;
             numberOfSubjects++;
-        }if (jenkins !=0)
-        {
+        }
+        if (jenkins != null) {
             totalMarks += jenkins;
             numberOfSubjects++;
-        }if (devops !=0)
-        {
+        }
+        if (devops != null) {
             totalMarks += devops;
             numberOfSubjects++;
         }
@@ -120,11 +110,12 @@ public class Marks {
         if (numberOfSubjects != 0) {
             average_marks = totalMarks / numberOfSubjects;
         } else {
-            // Handle the case where all marks are zero
+            // Handle the case where all marks are null
             average_marks = 0.0f;
         }
         calculateMarksRating();
     }
+
 
     // Calculating Marks Feedback
     private void calculateMarksRating() {
