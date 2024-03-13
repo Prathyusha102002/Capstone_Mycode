@@ -9,13 +9,13 @@ import lombok.Setter;
 public class EmployeeDTO {
 
 
-    private Long emp_id;
+    private Long empId;
 
 
-    private String emp_name;
+    private String empName;
 
 
-    private String emp_mail;
+    private String empMail;
 
 
     private Integer batchNo;

@@ -15,7 +15,7 @@ public class EmployeeService {
     public boolean authenticate(Long emp_id, String password) {
         Employee employee = employeeRepository.findById(emp_id).orElse(null);
         if (employee != null) {
-            return BCrypt.checkpw(password, employee.getPasswordHash());
+            return BCrypt.checkpw(password, employee.getPassword());
         }
         return false;
     }

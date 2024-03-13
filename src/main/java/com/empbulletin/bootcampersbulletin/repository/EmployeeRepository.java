@@ -9,6 +9,7 @@ import java.util.List;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findByBatchNo(Integer batchNo);
 
+
     //all crud database operations
 	
 }

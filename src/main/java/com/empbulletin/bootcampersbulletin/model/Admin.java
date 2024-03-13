@@ -14,11 +14,11 @@ public class Admin {
     @Id
     private Long adminId;
     @Column
-    private String name;
+    private String adminName;
     @Column
-    private String email;
+    private String adminEmail;
     @Column
-    private String password;
+    private String adminPassword;
 
 }
 

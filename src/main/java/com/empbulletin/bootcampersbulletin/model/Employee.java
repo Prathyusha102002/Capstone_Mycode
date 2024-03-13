@@ -2,46 +2,50 @@ package com.empbulletin.bootcampersbulletin.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+
 @Table(name = "Employee")
 public class Employee {
 
 	@Id
-	@Column(name = "emp_id")
-	private Long emp_id;
+	@Column(name = "empId")
+	private Long empId;
 
-	@Column(name = "emp_name")
-	private String emp_name;
+	@Column(name = "empName")
+	private String empName;
 
-	@Column(name = "emp_mail")
-	private String emp_mail;
+	@Column(name = "empMail")
+	private String empMail;
 
 	@Column(name = "password_hash")
-	private String passwordHash;
+	private String password;
 
 	@Column(name = "batchNo")
 	private Integer batchNo;
 
-	public Employee() {
 
-	}
-
-	public Employee(Long emp_id, String emp_name, String emp_mail, String password, Integer batchNo) {
-		this.emp_id = emp_id;
-		this.emp_name = emp_name;
-		this.emp_mail = emp_mail;
+	public Employee(Long empId, String empName, String empMail, String password, Integer batchNo) {
+		this.empId = empId;
+		this.empName = empName;
+		this.empMail = empMail;
 		setPassword(password);
 		this.batchNo = batchNo;
 	}
 
 	public void setPassword(String password) {
-		this.passwordHash = BCrypt.hashpw(password, BCrypt.gensalt());
+		this.password = BCrypt.hashpw(password, BCrypt.gensalt());
 	}
+
 
 }
