@@ -2,12 +2,16 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
+import com.empbulletin.bootcampersbulletin.exception.SubjectNotFoundException;
 import com.empbulletin.bootcampersbulletin.model.*;
 import com.empbulletin.bootcampersbulletin.repository.AdminRepository;
 import com.empbulletin.bootcampersbulletin.repository.EmployeeRepository;
 import com.empbulletin.bootcampersbulletin.repository.ScoresRepository;
 import com.empbulletin.bootcampersbulletin.service.AdminService;
+import com.empbulletin.bootcampersbulletin.service.EmployeeService;
 import com.empbulletin.bootcampersbulletin.service.ScoresService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +46,11 @@ public class AdminController {
     private SubjectRepository subjectRepository;
     @Autowired
     private ScoresService scoresService;
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private ScoresRepository scoresRepository;
 
     //Adding an employee
     @PostMapping("/addEmployee")
@@ -61,8 +70,27 @@ public class AdminController {
             return new ResponseEntity<>("Failed to add employee: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @Autowired
-    private  ScoresRepository scoresRepository;
+    // Updating employee details by emp_id
+
+
+
+    @Transactional
+    @DeleteMapping("/{empId}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long empId) {
+        // Check if the employee exists
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee with ID " + empId + " not found."));
+
+        // Delete all scores associated with the employee
+        scoresRepository.deleteAllByEmployee(employee);
+
+        // Delete the employee
+        employeeRepository.delete(employee);
+
+        return ResponseEntity.ok("Employee with ID " + empId + " and associated scores deleted successfully.");
+    }
+
+
     @PostMapping("/addMarks")
     public ResponseEntity<String> addSubjectMarks(@RequestBody SubjectMarksRequest request) {
         Long empId = request.getEmpId();

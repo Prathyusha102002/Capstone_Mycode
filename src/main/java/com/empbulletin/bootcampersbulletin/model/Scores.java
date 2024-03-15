@@ -30,7 +30,7 @@ public class Scores {
     @Column(name = "subjectInterviews")
     private Float subjectInterviews;
 
-
+ 
 
     public Scores(Employee employee, Subject subject, Float subjectMarks, Float subjectInterviews) {
         this.employee = employee;

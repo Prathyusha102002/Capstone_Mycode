@@ -19,4 +19,8 @@ public class EmployeeService {
         }
         return false;
     }
+
+
+    public void deleteEmployeeById(Long empId) {
+    }
 }
