@@ -2,20 +2,17 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
-import com.empbulletin.bootcampersbulletin.exception.SubjectNotFoundException;
+
 import com.empbulletin.bootcampersbulletin.model.*;
-import com.empbulletin.bootcampersbulletin.repository.AdminRepository;
-import com.empbulletin.bootcampersbulletin.repository.EmployeeRepository;
-import com.empbulletin.bootcampersbulletin.repository.ScoresRepository;
+import com.empbulletin.bootcampersbulletin.repository.*;
 import com.empbulletin.bootcampersbulletin.service.AdminService;
 import com.empbulletin.bootcampersbulletin.service.EmployeeService;
 import com.empbulletin.bootcampersbulletin.service.ScoresService;
-import jakarta.servlet.http.HttpSession;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import com.empbulletin.bootcampersbulletin.repository.SubjectRepository;
 import com.empbulletin.bootcampersbulletin.DTO.SubjectMarksRequest;
 import com.empbulletin.bootcampersbulletin.DTO.SubjectInterviewRequest;
 
@@ -52,17 +49,47 @@ public class AdminController {
     @Autowired
     private ScoresRepository scoresRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
+    @Autowired
+    private BatchesRepository batchesRepository;
+
+    // Admin login
+    @PostMapping("/login")
+    public ResponseEntity<String> adminLogin(@RequestBody Admin admin) {
+        // Find admin by adminName
+        Admin foundAdmin = adminRepository.findByAdminName(admin.getAdminName());
+        if (foundAdmin == null) {
+            return new ResponseEntity<>("Admin with username " + admin.getAdminName() + " not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Check if passwords match
+        if (!foundAdmin.getAdminPassword().equals(admin.getAdminPassword())) {
+            return new ResponseEntity<>("Invalid password for admin " + admin.getAdminName(), HttpStatus.UNAUTHORIZED);
+        }
+
+        // If admin is found and password matches, return success
+        return ResponseEntity.ok("Admin login successful");
+    }
+
     //Adding an employee
     @PostMapping("/addEmployee")
     public ResponseEntity<String> addEmployee(@RequestBody Employee employee) {
         try {
+            // Check if the batchNo exists in the Batches table
+            Integer batchNo = employee.getBatchNo();
+            boolean batchExists = batchesRepository.existsByBatchNo(batchNo);
+            if (!batchExists) {
+                return new ResponseEntity<>("Batch number " + batchNo + " does not exist. Please provide a valid batch number.", HttpStatus.BAD_REQUEST);
+            }
+
             // Check if the empId already exists
             Optional<Employee> existingEmployeeOpt = employeeRepository.findById(employee.getEmpId());
             if (existingEmployeeOpt.isPresent()) {
                 return new ResponseEntity<>("Employee with this empId already exists", HttpStatus.CONFLICT);
             }
 
-            // If empId doesn't exist, save the employee to the database
+            // If empId doesn't exist and batchNo exists, save the employee to the database
             employeeRepository.save(employee);
             return new ResponseEntity<>("Employee added successfully", HttpStatus.CREATED);
         } catch (Exception e) {
@@ -70,6 +97,7 @@ public class AdminController {
             return new ResponseEntity<>("Failed to add employee: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     // Updating employee details by emp_id
 
 
@@ -91,97 +119,104 @@ public class AdminController {
     }
 
 
+    //updating employee details
+    @PutMapping("/{empId}")
+    public ResponseEntity<String> updateEmployee(@PathVariable Long empId, @RequestBody EmployeeDTO updatedEmployee) {
+        return employeeService.updateEmployeeDetails(empId, updatedEmployee);
+    }
+
+
+
     @PostMapping("/addMarks")
-    public ResponseEntity<String> addSubjectMarks(@RequestBody SubjectMarksRequest request) {
+    public ResponseEntity<String> addMarks(@RequestBody SubjectMarksRequest request) {
+        // Retrieve empId from the request
         Long empId = request.getEmpId();
-        String subjectName = request.getSubjectName();
-        Float marks = request.getMarks();
 
         // Check if the employee exists
-        Employee employee = employeeRepository.findById(empId).orElse(null);
-        if (employee == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee with ID " + empId + " not found.");
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (optionalEmployee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Employee with ID " + empId + " not found.");
         }
 
-        // Check if the subject exists
-        Subject subject = subjectRepository.findBySubjectName(subjectName).orElse(null);
-        if (subject == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subject with name " + subjectName + " not found.");
+        // Fetch the batchNo of the employee
+        Employee employee = optionalEmployee.get();
+        Integer batchNo = employee.getBatchNo();
+
+        // Retrieve subjectId from the subject name and batchNo
+        Optional<Subject> optionalSubject = subjectRepository.findBySubjectNameAndBatchesBatchNo(request.getSubjectName(), batchNo);
+        if (optionalSubject.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Subject '" + request.getSubjectName() + "' not found for batchNo " + batchNo);
         }
 
-        // Check if the combination of empId and subjectName exists in Scores table
-        Scores existingScore = scoresRepository.findByEmployeeAndSubject(employee, subject);
-        if (existingScore != null) {
-            // If the row exists, update the marks
-            existingScore.setSubjectMarks(marks);
-            scoresRepository.save(existingScore);
-            return ResponseEntity.status(HttpStatus.OK).body("Marks updated successfully.");
+        // Fetch the subjectId
+        Long subjectId = optionalSubject.get().getSubjectId();
+
+        // Check if the combination of empId and subjectId exists in the scores table
+        Optional<Scores> optionalScores = scoresRepository.findByEmployeeEmpIdAndSubjectSubjectId(empId, subjectId);
+        if (optionalScores.isPresent()) {
+            // Update subjectMarks if the entry exists
+            Scores scores = optionalScores.get();
+            scores.setSubjectMarks(request.getSubjectMarks());
+            scoresRepository.save(scores);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Subject marks updated successfully for Employee ID " + empId);
         } else {
-            // If the row does not exist, create a new row with marks
-            Scores newScore = new Scores(employee, subject, marks, null);
-            scoresRepository.save(newScore);
-            return ResponseEntity.status(HttpStatus.OK).body("Marks added successfully.");
+            // Create a new entry if the combination does not exist
+            Scores newScores = new Scores(employee, optionalSubject.get(), request.getSubjectMarks(), null);
+            scoresRepository.save(newScores);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Subject marks added successfully for Employee ID " + empId);
         }
     }
+
     @PostMapping("/addInterviews")
-    public ResponseEntity<String> addSubjectInterviews(@RequestBody SubjectInterviewRequest request) {
+    public ResponseEntity<String> addInterviews(@RequestBody SubjectInterviewRequest request) {
+        // Retrieve empId from the request
         Long empId = request.getEmpId();
-        String subjectName = request.getSubjectName();
-        Float interviews = request.getInterviews();
 
         // Check if the employee exists
-        Employee employee = employeeRepository.findById(empId).orElse(null);
-        if (employee == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee with ID " + empId + " not found.");
+        Optional<Employee> optionalEmployee = employeeRepository.findById(empId);
+        if (optionalEmployee.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Employee with ID " + empId + " not found.");
         }
 
-        // Check if the subject exists
-        Subject subject = subjectRepository.findBySubjectName(subjectName).orElse(null);
-        if (subject == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subject with name " + subjectName + " not found.");
+        // Fetch the batchNo of the employee
+        Employee employee = optionalEmployee.get();
+        Integer batchNo = employee.getBatchNo();
+
+        // Retrieve subjectId from the subject name and batchNo
+        Optional<Subject> optionalSubject = subjectRepository.findBySubjectNameAndBatchesBatchNo(request.getSubjectName(), batchNo);
+        if (optionalSubject.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Subject '" + request.getSubjectName() + "' not found for batchNo " + batchNo);
         }
 
-        // Check if the combination of empId and subjectName exists in Scores table
-        Scores existingScore = scoresRepository.findByEmployeeAndSubject(employee, subject);
-        if (existingScore != null) {
-            // If the row exists, update the interviews
-            existingScore.setSubjectInterviews(interviews);
-            scoresRepository.save(existingScore);
-            return ResponseEntity.status(HttpStatus.OK).body("Interviews updated successfully.");
+        // Fetch the subjectId
+        Long subjectId = optionalSubject.get().getSubjectId();
+
+        // Check if the combination of empId and subjectId exists in the scores table
+        Optional<Scores> optionalScores = scoresRepository.findByEmployeeEmpIdAndSubjectSubjectId(empId, subjectId);
+        if (optionalScores.isPresent()) {
+            // Update subjectInterviews if the entry exists
+            Scores scores = optionalScores.get();
+            scores.setSubjectInterviews(request.getSubjectInterviews());
+            scoresRepository.save(scores);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Subject interviews updated successfully for Employee ID " + empId);
         } else {
-            // If the row does not exist, create a new row with interviews
-            Scores newScore = new Scores(employee, subject, null, interviews);
-            scoresRepository.save(newScore);
-            return ResponseEntity.status(HttpStatus.OK).body("Interviews added successfully.");
+            // Create a new entry if the combination does not exist
+            Scores newScores = new Scores(employee, optionalSubject.get(), null, request.getSubjectInterviews());
+            scoresRepository.save(newScores);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Subject interviews added successfully for Employee ID " + empId);
         }
     }
-//    @GetMapping("/averageMarksFeedback/{empId}")
-//    public ResponseEntity<Object> getAverageMarksAndFeedback(@PathVariable Long empId) {
-//        // Get subject-wise marks for the employee
-//        Map<String, Float> subjectMarksMap = scoresService.getSubjectMarksByEmployeeId(empId);
-//
-//        if (subjectMarksMap.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for employee ID: " + empId);
-//        }
-//
-//        // Calculate average marks
-//        Float averageMarks = scoresService.calculateAverageMarks(subjectMarksMap);
-//
-//        // Generate feedback based on average marks
-//        String feedback = scoresService.generateFeedback(averageMarks);
-//
-//        // Construct response JSON
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("employeeId", empId);
-//        response.put("averagemarks", averageMarks);
-//        response.put("feedback", feedback);
-//        response.put("subjectMarks", subjectMarksMap);
-//
-//        // Return response
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-//    }
-@GetMapping("/averageMarksFeedback/{empId}")
-public ResponseEntity<Object> getAverageMarksAndFeedback(@PathVariable Long empId) {
+
+    @GetMapping("/averageMarksFeedback/{empId}")
+    public ResponseEntity<Object> getAverageMarksAndFeedback(@PathVariable Long empId) {
     // Get subject-wise marks for the employee
     Map<String, Float> subjectMarksMap = scoresService.getSubjectMarksByEmployeeId(empId);
 
@@ -232,61 +267,7 @@ public ResponseEntity<Object> getAverageMarksAndFeedback(@PathVariable Long empI
     }
 
 
-//    @PostMapping("/addMarks")
-//    public ResponseEntity<String> addSubjectMarks(
-//            @RequestParam Long empId,
-//            @RequestParam String subjectName,
-//            @RequestParam Float marks
-//    ) {
-//        // Check if the employee exists
-//        Employee employee = employeeRepository.findById(empId).orElse(null);
-//        if (employee == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee with ID " + empId + " not found.");
-//        }
-//
-//        // Check if the subject exists
-//        Subject subject =subjectRepository.findBySubjectName(subjectName).orElse(null);
-//        if(subject==null){
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subject with name " + subjectName + " not found.");
-//        }
-//
-//
-//        // Check if the combination of empId and subjectName exists in Scores table
-//        Scores existingScore = scoresRepository.findByEmployeeAndSubject(employee, subject);
-//        if (existingScore != null) {
-//            // If the row exists, update the marks
-//            existingScore.setSubjectMarks(marks);
-//            scoresRepository.save(existingScore);
-//            return ResponseEntity.status(HttpStatus.OK).body("Marks updated successfully.");
-//        } else {
-//            // If the row does not exist, create a new row with marks
-//            Scores newScore = new Scores(employee, subject, marks, null);
-//            scoresRepository.save(newScore);
-//            return ResponseEntity.status(HttpStatus.OK).body("Marks added successfully.");
-//        }
-//    }
 
-
-    @Autowired
-    private AdminRepository adminRepository;
-
-    // Admin login
-    @PostMapping("/login")
-    public ResponseEntity<String> adminLogin(@RequestBody Admin admin) {
-        // Find admin by adminName
-        Admin foundAdmin = adminRepository.findByAdminName(admin.getAdminName());
-        if (foundAdmin == null) {
-            return new ResponseEntity<>("Admin with username " + admin.getAdminName() + " not found", HttpStatus.NOT_FOUND);
-        }
-
-        // Check if passwords match
-        if (!foundAdmin.getAdminPassword().equals(admin.getAdminPassword())) {
-            return new ResponseEntity<>("Invalid password for admin " + admin.getAdminName(), HttpStatus.UNAUTHORIZED);
-        }
-
-        // If admin is found and password matches, return success
-        return ResponseEntity.ok("Admin login successful");
-    }
 
     // Get all employees
     @GetMapping("/allEmployees")

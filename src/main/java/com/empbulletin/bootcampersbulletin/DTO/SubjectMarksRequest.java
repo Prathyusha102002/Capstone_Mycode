@@ -9,6 +9,6 @@ import lombok.Setter;
 public class SubjectMarksRequest {
     private Long empId;
     private String subjectName;
-    private Float marks;
+    private Float SubjectMarks;
 
 }

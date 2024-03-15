@@ -23,5 +23,9 @@ public class Subject {
     @Column(name = "subjectName")
     private String subjectName;
 
+    @ManyToOne
+    @JoinColumn(name = "batchNo", referencedColumnName = "batchNo")
+    private Batches batches;
+
 
 }

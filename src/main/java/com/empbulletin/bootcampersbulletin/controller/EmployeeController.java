@@ -2,7 +2,6 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
 import com.empbulletin.bootcampersbulletin.service.EmployeeService;
@@ -41,6 +40,8 @@ public class EmployeeController {
 			return "Login failed";
 		}
 	}
+
+
 	//get all employees
 	@GetMapping("/allEmployees")
 	public List<EmployeeDTO> getAllEmployees() {
@@ -56,6 +57,7 @@ public class EmployeeController {
 				})
 				.collect(Collectors.toList());
 	}
+
 
 	// Get employee by ID
 	@GetMapping("/{id}")
@@ -73,6 +75,7 @@ public class EmployeeController {
 			throw new ResourceNotFoundException("Employee with id " + id + " not found");
 		}
 	}
+
 
 	//Get all employees under the Batch_number
 	@GetMapping("/batch/{batchNo}")
@@ -94,7 +97,7 @@ public class EmployeeController {
 	}
 
 
-
+	//get employee average marks and feedback by empId
 	@GetMapping("/averageMarksFeedback/{empId}")
 	public ResponseEntity<Object> getAverageMarksAndFeedback(@PathVariable Long empId) {
 		// Get subject-wise marks for the employee
@@ -120,6 +123,8 @@ public class EmployeeController {
 		// Return response
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+
+	//get employee average interviews and feedback by empId
 	@GetMapping("/averageInterviewsFeedback/{empId}")
 	public ResponseEntity<Object> getAverageInterviewsAndFeedback(@PathVariable Long empId) {
 		// Get subject-wise interviews for the employee
@@ -145,5 +150,6 @@ public class EmployeeController {
 		// Return response
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+
 
 }

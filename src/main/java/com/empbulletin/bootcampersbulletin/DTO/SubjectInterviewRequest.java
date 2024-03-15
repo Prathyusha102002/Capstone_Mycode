@@ -8,5 +8,5 @@ import lombok.Setter;
 public class SubjectInterviewRequest {
     private Long empId;
     private String subjectName;
-    private Float interviews;
+    private Float subjectInterviews;
 }

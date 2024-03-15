@@ -1,10 +1,11 @@
 package com.empbulletin.bootcampersbulletin.service;
 
 import com.empbulletin.bootcampersbulletin.model.Scores;
+import com.empbulletin.bootcampersbulletin.model.Subject;
 import com.empbulletin.bootcampersbulletin.repository.ScoresRepository;
+import com.empbulletin.bootcampersbulletin.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ public class ScoresService {
     public ScoresService(ScoresRepository scoresRepository) {
         this.scoresRepository = scoresRepository;
     }
+    @Autowired
+    private SubjectRepository subjectRepository;
 
     public Float calculateAverageMarks(Map<String, Float> subjectMarksMap) {
         // Calculate average marks
@@ -92,12 +95,16 @@ public class ScoresService {
 
 
     public Map<String, Float> getSubjectInterviewsByEmployeeId(Long empId) {
-        Map<String, Float> subjectInterviewsMap=new HashMap<>();
-        List<Scores> scoresList=scoresRepository.findByEmployee_EmpId(empId);
+        Map<String, Float> subjectInterviewsMap = new HashMap<>();
+        List<Scores> scoresList = scoresRepository.findByEmployeeEmpId(empId);
         for (Scores score : scoresList) {
-            String subjectName = score.getSubject().getSubjectName();
-            Float interviews = score.getSubjectInterviews();
-            subjectInterviewsMap.put(subjectName, interviews);
+            Long subjectId = score.getSubject().getSubjectId();
+            Subject subject = subjectRepository.findById(subjectId).orElse(null);
+            if (subject != null) {
+                String subjectName = subject.getSubjectName();
+                Float interviews = score.getSubjectInterviews();
+                subjectInterviewsMap.put(subjectName, interviews);
+            }
         }
         return subjectInterviewsMap;
     }
@@ -105,13 +112,17 @@ public class ScoresService {
         Map<String, Float> subjectMarksMap = new HashMap<>();
 
         // Retrieve scores for the given employee ID
-        List<Scores> scoresList = scoresRepository.findByEmployee_EmpId(empId);
+        List<Scores> scoresList = scoresRepository.findByEmployeeEmpId(empId);
 
         // Populate subject marks map
         for (Scores score : scoresList) {
-            String subjectName = score.getSubject().getSubjectName();
-            Float marks = score.getSubjectMarks();
-            subjectMarksMap.put(subjectName, marks);
+            Long subjectId = score.getSubject().getSubjectId();
+            Subject subject = subjectRepository.findById(subjectId).orElse(null);
+            if (subject != null) {
+                String subjectName = subject.getSubjectName();
+                Float marks = score.getSubjectMarks();
+                subjectMarksMap.put(subjectName, marks);
+            }
         }
 
         return subjectMarksMap;

@@ -13,7 +13,9 @@ public interface SubjectRepository extends JpaRepository<Subject,Long> {
 
 
 
-    boolean existsBySubjectName(String subjectName);
+    boolean existsBySubjectNameAndBatchesBatchNo(String subjectName, Integer batchNo);
 
+    Optional<Subject> findBySubjectNameAndBatchesBatchNo(String subjectName, Integer batchNo);
 
+    void deleteBySubjectId(Long subjectId);
 }

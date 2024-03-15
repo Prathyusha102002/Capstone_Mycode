@@ -21,7 +21,7 @@ public class Scores {
     private Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "subjectName", referencedColumnName = "subjectName")
+    @JoinColumn(name = "subjectId", referencedColumnName = "subjectId")
     private Subject subject;
 
     @Column(name = "subjectMarks")
@@ -30,7 +30,7 @@ public class Scores {
     @Column(name = "subjectInterviews")
     private Float subjectInterviews;
 
- 
+
 
     public Scores(Employee employee, Subject subject, Float subjectMarks, Float subjectInterviews) {
         this.employee = employee;

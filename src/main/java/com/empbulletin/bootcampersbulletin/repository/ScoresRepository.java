@@ -24,9 +24,13 @@ public interface ScoresRepository extends JpaRepository<Scores, Long> {
 
  void deleteAllBySubject(Subject subject);
 
- List<Scores> findByEmployee_EmpId(Long empId);
+ List<Scores> findByEmployeeEmpId(Long empId);
 
 
  void deleteByEmployeeEmpId(Long empId);
  void deleteAllByEmployee(Employee employee);
+
+ Optional<Scores> findByEmployeeEmpIdAndSubjectSubjectId(Long empId, Long subjectId);
+
+ void deleteBySubjectSubjectId(Long subjectId);
 }
