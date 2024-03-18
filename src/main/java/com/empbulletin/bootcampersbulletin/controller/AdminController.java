@@ -2,24 +2,19 @@ package com.empbulletin.bootcampersbulletin.controller;
 
 import com.empbulletin.bootcampersbulletin.DTO.EmployeeDTO;
 import com.empbulletin.bootcampersbulletin.exception.ResourceNotFoundException;
-
 import com.empbulletin.bootcampersbulletin.model.*;
 import com.empbulletin.bootcampersbulletin.repository.*;
 import com.empbulletin.bootcampersbulletin.service.AdminService;
 import com.empbulletin.bootcampersbulletin.service.EmployeeService;
 import com.empbulletin.bootcampersbulletin.service.ScoresService;
-
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.empbulletin.bootcampersbulletin.DTO.SubjectMarksRequest;
 import com.empbulletin.bootcampersbulletin.DTO.SubjectInterviewRequest;
-
 import java.util.*;
-
 import com.empbulletin.bootcampersbulletin.model.Subject;
-
 import java.util.stream.Collectors;
 import org.springframework.http.ResponseEntity;
 
@@ -54,6 +49,8 @@ public class AdminController {
     @Autowired
     private BatchesRepository batchesRepository;
 
+
+
     // Admin login
     @PostMapping("/login")
     public ResponseEntity<String> adminLogin(@RequestBody Admin admin) {
@@ -71,6 +68,7 @@ public class AdminController {
         // If admin is found and password matches, return success
         return ResponseEntity.ok("Admin login successful");
     }
+
 
     //Adding an employee
     @PostMapping("/addEmployee")
@@ -98,10 +96,8 @@ public class AdminController {
         }
     }
 
+
     // Updating employee details by emp_id
-
-
-
     @Transactional
     @DeleteMapping("/{empId}")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long empId) {
